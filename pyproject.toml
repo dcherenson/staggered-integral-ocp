@@ -1,0 +1,13 @@
+[project]
+name = "staggered-integral-ocp"
+version = "0.1.0"
+description = "Conformal Adaptive Control with Dynamic Tube MPC and SSML disturbance learning for quadrotor navigation."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "casadi>=3.7.2",
+    "matplotlib>=3.10.0",
+    "numpy>=1.26.0",
+    "scipy>=1.13.0",
+    "torch>=2.0.0",
+]
