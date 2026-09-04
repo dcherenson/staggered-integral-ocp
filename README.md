@@ -39,6 +39,28 @@ uv run python main.py --scenario adaptation_off
 uv run python main.py --scenario adaptation_on
 ```
 
+### 3) Disturbance-observer robust CLF-ECBF-QP
+
+```bash
+uv run python run_disturbance_observer.py --scenario adaptation_off
+```
+
+This adds the high-gain disturbance observer and robust ECBF/CLF-QP from
+`2201.05758v3.pdf`. Outputs are written under
+`output/disturbance_observer/`.
+
+The actuator interpretation is selected by changing
+`ACTUATOR_INTERFACE` at the top of `disturbance_observer.py` to either
+`"virtual_acceleration"` or `"direct_physical_input"`.
+
+### 4) Compare SIOCP and disturbance observer
+
+```bash
+uv run python compare_algorithms.py --siocp-scenario both
+```
+
+Comparison figures and a summary CSV are written under `output/comparison/`.
+
 ## Scenario Notes
 
 - `adaptation_off`: uses a frozen pre-trained SSML model (`gamma_lr = 0.0`).
@@ -52,6 +74,13 @@ Each run writes figures/animations into `output/`:
 - `output/top_down_tube.png`
 - `output/si-ocp_vs_true.png`
 - `output/nn_params_vs_time.png`
+
+The disturbance-observer runner additionally writes observer estimates and
+error bounds, robust CBF margins, CLF slack, goal/clearance plots, and a
+top-down animation. The current plant injects fresh Gaussian noise inside
+each ODE evaluation; therefore the observer bounds are reported as sampled-
+time empirical bounds and should not be interpreted as the paper's strict
+continuous-time guarantee for that noise model.
 
 If you want to compare both scenarios side by side, save each run's outputs before running the next scenario.
 
