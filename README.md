@@ -39,27 +39,19 @@ uv run python main.py --scenario adaptation_off
 uv run python main.py --scenario adaptation_on
 ```
 
-### 3) Disturbance-observer robust CLF-ECBF-QP
+### 3) Compare SIOCP and disturbance observer
 
 ```bash
-uv run python run_disturbance_observer.py --scenario adaptation_off
+uv run python compare_algorithms.py --scenario both
 ```
 
-This adds the high-gain disturbance observer and robust ECBF/CLF-QP from
-`2201.05758v3.pdf`. Outputs are written under
-`output/disturbance_observer/`.
+Select `--algorithm siocp` or `--algorithm dob` to run only one algorithm;
+`--algorithm both` (the default) runs both and creates the overlays.
 
-The actuator interpretation is selected by changing
-`ACTUATOR_INTERFACE` at the top of `disturbance_observer.py` to either
-`"virtual_acceleration"` or `"direct_physical_input"`.
-
-### 4) Compare SIOCP and disturbance observer
-
-```bash
-uv run python compare_algorithms.py --siocp-scenario both
-```
-
-Comparison figures and a summary CSV are written under `output/comparison/`.
+The comparison uses a high-gain disturbance observer (DOB) to set the
+disturbance bound for the same dynamic tube MPC controller, with a fixed
+observer gain of 5. Both methods receive the same replayed disturbance noise.
+Comparison figures and animations are written to `output/comparison_dob_dtmpc/`.
 
 ## Scenario Notes
 
@@ -75,14 +67,11 @@ Each run writes figures/animations into `output/`:
 - `output/si-ocp_vs_true.png`
 - `output/nn_params_vs_time.png`
 
-The disturbance-observer runner additionally writes observer estimates and
-error bounds, robust CBF margins, CLF slack, goal/clearance plots, and a
-top-down animation. The current plant injects fresh Gaussian noise inside
-each ODE evaluation; therefore the observer bounds are reported as sampled-
-time empirical bounds and should not be interpreted as the paper's strict
-continuous-time guarantee for that noise model.
-
 If you want to compare both scenarios side by side, save each run's outputs before running the next scenario.
+
+The adaptation-off animation shows SIOCP. The adaptation-on animation
+overlays SIOCP (blue) and DOB-DT-MPC (orange): SIOCP reaches the goal while
+the observer-based controller stops after an MPC solver failure.
 
 ### Adaptation OFF
 
@@ -90,7 +79,7 @@ If you want to compare both scenarios side by side, save each run's outputs befo
 
 ### Adaptation ON
 
-![Adaptation ON animation](assets/animations/adaptation_on.gif)
+![Adaptation ON: SIOCP and disturbance observer](assets/animations/adaptation_on.gif)
 
 ## Citation
 

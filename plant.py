@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -7,7 +9,11 @@ class Plant:
     State x = [px, py, pz, vx, vy, vz, phi, theta]^T
     Control u = [p, q, T]^T (Roll rate, Pitch rate, Net Thrust)
     """
-    def __init__(self, spatial_mode=False):
+    def __init__(
+        self,
+        spatial_mode: bool = False,
+        noise_source: Callable[[float], np.ndarray] | None = None,
+    ):
         self.m = 1.0  # kg
         self.g = np.array([0, 0, -9.81])
         self.spatial_mode = spatial_mode  # Toggle for online spatial gradient shift
@@ -16,6 +22,7 @@ class Plant:
         self.k_drag = np.array([0.3, 0.3, 0.15])  # Drag per axis (N·s/m)
         # Angle-dependent coupling coefficients (phi/theta modulate disturbance)
         self.k_angle = 0.4  # Lateral force coupling from tilt
+        self.noise_source = noise_source
 
     def wind_velocity(self, t, p):
         v_wind_x = 2.0 * np.sin(0.5 * t) + 1.0 * np.sin(2.0 * t)
@@ -37,7 +44,12 @@ class Plant:
         """Realistic unmodeled drag using body-frame relative velocity."""
         phi, theta = angles
         # Additive noise
-        noise = np.random.randn(3) * np.array([0.2, 0.2, 0.1])
+        if self.noise_source is None:
+            noise = np.random.randn(3) * np.array([0.2, 0.2, 0.1])
+        else:
+            noise = np.asarray(self.noise_source(float(t)), dtype=float)
+            if noise.shape != (3,) or not np.all(np.isfinite(noise)):
+                raise ValueError("noise_source must return a finite length-3 vector")
         v_wind = self.wind_velocity(t, p)
         v_rel = v - v_wind
         
