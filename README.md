@@ -79,7 +79,7 @@ the observer-based controller stops after an MPC solver failure.
 
 ### Adaptation ON
 
-![Adaptation ON: SIOCP and disturbance observer](assets/animations/adaptation_on.gif)
+![Adaptation ON: SIOCP and disturbance observer](assets/animations/adaptation_on_overlay.gif)
 
 ## Citation
 
