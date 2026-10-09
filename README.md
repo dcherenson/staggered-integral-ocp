@@ -39,6 +39,20 @@ uv run python main.py --scenario adaptation_off
 uv run python main.py --scenario adaptation_on
 ```
 
+### 3) Compare SIOCP and disturbance observer
+
+```bash
+uv run python compare_algorithms.py --scenario both
+```
+
+Select `--algorithm siocp` or `--algorithm dob` to run only one algorithm;
+`--algorithm both` (the default) runs both and creates the overlays.
+
+The comparison uses a high-gain disturbance observer (DOB) to set the
+disturbance bound for the same dynamic tube MPC controller, with a fixed
+observer gain of 5. Both methods receive the same replayed disturbance noise.
+Comparison figures and animations are written to `output/comparison_dob_dtmpc/`.
+
 ## Scenario Notes
 
 - `adaptation_off`: uses a frozen pre-trained SSML model (`gamma_lr = 0.0`).
@@ -55,13 +69,17 @@ Each run writes figures/animations into `output/`:
 
 If you want to compare both scenarios side by side, save each run's outputs before running the next scenario.
 
+The adaptation-off animation shows SIOCP. The adaptation-on animation
+overlays SIOCP (blue) and DOB-DT-MPC (orange): SIOCP reaches the goal while
+the observer-based controller stops after an MPC solver failure.
+
 ### Adaptation OFF
 
 ![Adaptation OFF animation](assets/animations/adaptation_off.gif)
 
 ### Adaptation ON
 
-![Adaptation ON animation](assets/animations/adaptation_on.gif)
+![Adaptation ON: SIOCP and disturbance observer](assets/animations/adaptation_on.gif)
 
 ## Citation
 
