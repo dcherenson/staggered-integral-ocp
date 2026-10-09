@@ -89,7 +89,7 @@ If you use this repository, please consider citing the paper:
 @inproceedings{cherenson2026staggered,
   title={Staggered Integral Online Conformal Prediction for Safe Dynamics Adaptation with Multi-Step Coverage Guarantees},
   author={Cherenson, Daniel M and Panagou, Dimitra},
-  booktitle={},
+  booktitle={IEEE Conference on Decision and Control (CDC)},
   year={2026}
 }
 ```
